@@ -4,7 +4,6 @@ Package ndbc is a pure Go client library for parsing data from NOAA NDBC (Nation
 package ndbc
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -37,7 +36,7 @@ type BuoyData struct {
 }
 
 // GetBuoyData5Day pulls from NOAA NDBC 5day data structure
-func GetBuoyData5Day(buoyID string, maxRecords int) []byte {
+func GetBuoyData5Day(buoyID string, maxRecords int) []BuoyData {
 	// sample 5 day data
 	// http://www.ndbc.noaa.gov/data/5day2/44030_5day.txt
 
@@ -47,7 +46,7 @@ func GetBuoyData5Day(buoyID string, maxRecords int) []byte {
 }
 
 // GetBuoyData45Day pulls from NOAA NDBC 45day data structure
-func GetBuoyData45Day(buoyID string, maxRecords int) []byte {
+func GetBuoyData45Day(buoyID string, maxRecords int) []BuoyData {
 	// sample 45day data
 	// http://www.ndbc.noaa.gov/data/realtime2/44030.txt
 
@@ -56,7 +55,7 @@ func GetBuoyData45Day(buoyID string, maxRecords int) []byte {
 	return getBuoyTabularData(url, maxRecords)
 }
 
-func getBuoyTabularData(url string, maxRecords int) []byte {
+func getBuoyTabularData(url string, maxRecords int) []BuoyData {
 	res, err := http.Get(url)
 
 	if err != nil {
@@ -92,19 +91,13 @@ func getBuoyTabularData(url string, maxRecords int) []byte {
 	buoyDataSet := make([]BuoyData, nRecords)
 
 	for i := range buoyDataSet {
-		buoyDataSet[i] = CreateBuoyHourRecord(buoyDataLines[i])
+		buoyDataSet[i] = createBuoyHourRecord(buoyDataLines[i])
 	}
 
-	data, err := json.Marshal(buoyDataSet)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return data
+	return buoyDataSet
 }
 
-func CreateBuoyHourRecord(row string) BuoyData {
+func createBuoyHourRecord(row string) BuoyData {
 	col := strings.Split(row, " ")
 	return BuoyData{
 		Year:               getInt(col[0]),
