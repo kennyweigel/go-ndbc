@@ -92,7 +92,7 @@ func getBuoyTabularData(url string, maxRecords int) []byte {
 	buoyDataSet := make([]BuoyData, nRecords)
 
 	for i := range buoyDataSet {
-		buoyDataSet[i] = createBuoyHourRecord(buoyDataLines[i])
+		buoyDataSet[i] = CreateBuoyHourRecord(buoyDataLines[i])
 	}
 
 	data, err := json.Marshal(buoyDataSet)
@@ -104,7 +104,7 @@ func getBuoyTabularData(url string, maxRecords int) []byte {
 	return data
 }
 
-func createBuoyHourRecord(row string) BuoyData {
+func CreateBuoyHourRecord(row string) BuoyData {
 	col := strings.Split(row, " ")
 	return BuoyData{
 		Year:               getInt(col[0]),
