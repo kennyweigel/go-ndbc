@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -98,7 +99,9 @@ func getBuoyTabularData(url string, maxRecords int) []BuoyData {
 }
 
 func createBuoyHourRecord(row string) BuoyData {
-	col := strings.Split(row, " ")
+	space := regexp.MustCompile(`\s+`)
+	cleanRow := space.ReplaceAllString(row, " ")
+	col := strings.Split(cleanRow, " ")
 	return BuoyData{
 		Year:               getInt(col[0]),
 		Month:              getInt(col[1]),

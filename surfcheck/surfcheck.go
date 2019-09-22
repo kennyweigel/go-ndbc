@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"log"
 	"os"
 
 	"github.com/kennyweigel/go-ndbc/ndbc"
@@ -17,7 +18,15 @@ func main() {
 
 	data := ndbc.GetBuoyData5Day(*flagID, *flagMax)
 
+	jsonData, err := json.Marshal(map[string]interface{}{
+		"data": data,
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var out bytes.Buffer
-	json.Indent(&out, data, "=", "\t")
+	json.Indent(&out, jsonData, "=", "\t")
 	out.WriteTo(os.Stdout)
 }
